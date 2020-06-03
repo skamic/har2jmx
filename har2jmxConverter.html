@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="EUC-KR">
+    <title>Insert title here</title>
+</head>
+
+<body>
+    <div>
+        Select HAR File:
+        <br>
+        <input id="harFile" type="file" accept=".har">
+    </div>
+    <br>
+    <div>
+        <input id="button" type="button" name="convert" value="Convert HAR to JMX File" disabled>
+    </div>
+    <br>
+    <div>
+        JMX Contents
+        <br>
+        <textarea id="jmxArea" rows="50" cols="200" wrap="soft" style="resize: none;"></textarea>
+    </div>
+    <script type="text/javascript" src="/testweb/js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="/testweb/js/har2jmx.js"></script>
+    <script>
+        var harFile = document.getElementById("harFile");
+        var convertButton = document.getElementById("button");
+        var harText;
+        var harFileName;
+
+        harFile.onchange = function() {
+            var file = harFile.files[0];
+            var dotIndex = file.name.lastIndexOf(".");
+            var fileType = file.name.slice(dotIndex + 1);
+
+            if (fileType != "har") {
+                window.alert("Please Select *.har File");
+                harFile.value = "";
+                return;
+            }
+            
+            harFileName = file.name.substring(0, dotIndex);
+
+            var reader = new FileReader();
+            reader.readAsText(file);
+
+            reader.onload = function() {
+                harText = reader.result;
+                convertButton.removeAttribute("disabled");
+            }
+        }
+
+        convertButton.onclick = function() {
+            $.ajax({
+                url: location.origin + "/testweb/template.jmx",
+                async: false,
+                dataType: "xml",
+                success: function(response) {
+                    template = response;
+                }
+            });
+
+            var har2JmxConverter = new Har2JmxConverter();
+            var jmxArea = document.getElementById("jmxArea");
+            jmxArea.value = har2JmxConverter.convert(template, harText);
+
+            download(harFileName + ".jmx", jmxArea.value);
+        }
+
+        function download(filename, text) {
+            var element = document.createElement('a');
+
+            element.setAttribute('href', 'data:application/xml;charset=utf-8,' + encodeURIComponent(text));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+        }
+    </script>
+</body>
+
+</html>
