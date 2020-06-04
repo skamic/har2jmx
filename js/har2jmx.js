@@ -95,7 +95,7 @@ Har2JmxConverter.prototype.makeHTTPSampler = function(entryNumber, url, method, 
     var httpSamplerProxy = this.createElement("HTTPSamplerProxy", "guiclass", "HttpTestSampleGui", "testclass",
         "HTTPSamplerProxy", "testname", testname, "enabled", "true");
 
-    if ("POST" == method && postData.hasOwnProperty("text")) {
+    if ("POST" == method && postData != null && postData.hasOwnProperty("text")) {
         var boolProp = this.createElement("boolProp", "name", "HTTPSampler.postBodyRaw");
         httpSamplerProxy.appendChild(boolProp);
         boolProp.appendChild(document.createTextNode("true"));
@@ -169,7 +169,7 @@ Har2JmxConverter.prototype.makeArgumentsPart = function(method, queryString, pos
     var elementProp = this.createElement("elementProp", "name", "HTTPsampler.Arguments", "elementType", "Arguments",
         "guiclass", "HTTPArgumentsPanel", "testclass", "Arguments", "enabled", "true");
 
-    if ("POST" == method && postData.hasOwnProperty("text")) {
+    if ("POST" == method && postData != null && postData.hasOwnProperty("text")) {
         elementProp.removeAttribute("guiclass");
         elementProp.removeAttribute("testclass");
         elementProp.removeAttribute("enabled");
@@ -178,7 +178,7 @@ Har2JmxConverter.prototype.makeArgumentsPart = function(method, queryString, pos
     var collectionProp = this.createElement("collectionProp", "name", "Arguments.arguments");
     elementProp.appendChild(collectionProp);
 
-    if ("GET" == method || ("POST" == method && postData.hasOwnProperty("params"))) {
+    if ("GET" == method || ("POST" == method && postData != null postData.hasOwnProperty("params"))) {
         var queries = ("GET" == method ? queryString : postData.params);
         for (var query of queries) {
             var name = query.name;
@@ -216,7 +216,7 @@ Har2JmxConverter.prototype.makeArgumentsPart = function(method, queryString, pos
                 useEqualsBoolProp.appendChild(document.createTextNode("true"));
             }
         }
-    } else if ("POST" == method && postData.hasOwnProperty("text")) {
+    } else if ("POST" == method && postData != null postData.hasOwnProperty("text")) {
         var argumentElementProp = this.createElement("elementProp", "name", "", "elementType", "HTTPArgument");
         collectionProp.appendChild(argumentElementProp);
 
