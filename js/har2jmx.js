@@ -178,7 +178,7 @@ Har2JmxConverter.prototype.makeArgumentsPart = function(method, queryString, pos
     var collectionProp = this.createElement("collectionProp", "name", "Arguments.arguments");
     elementProp.appendChild(collectionProp);
 
-    if ("GET" == method || ("POST" == method && postData != null postData.hasOwnProperty("params"))) {
+    if ("GET" == method || ("POST" == method && postData != null && postData.hasOwnProperty("params"))) {
         var queries = ("GET" == method ? queryString : postData.params);
         for (var query of queries) {
             var name = query.name;
@@ -216,7 +216,7 @@ Har2JmxConverter.prototype.makeArgumentsPart = function(method, queryString, pos
                 useEqualsBoolProp.appendChild(document.createTextNode("true"));
             }
         }
-    } else if ("POST" == method && postData != null postData.hasOwnProperty("text")) {
+    } else if ("POST" == method && postData != null && postData.hasOwnProperty("text")) {
         var argumentElementProp = this.createElement("elementProp", "name", "", "elementType", "HTTPArgument");
         collectionProp.appendChild(argumentElementProp);
 
